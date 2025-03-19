@@ -1,0 +1,7 @@
+{
+  "src": [
+    "pages/MinePage",
+    "pages/MainPage",
+    "pages/PopularPage"
+  ]
+}
