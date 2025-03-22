@@ -3,34 +3,55 @@ import { $get_news } from '../utils/request'
 
 @Component
 export default struct MainContent {
-  // @Link :string
+
+
   @State egDivider: DividerTmp = new DividerTmp(1, 20, 20, Color.Black)
   @State res: Array<NewsType> = [] //定数据
-  // @Link path : String
+  @Prop path : string;
+  @Prop keyword : string
+
+  private loading: boolean = false;  // 是否正在加载
+  private hasMore: boolean = true;  // 是否还有更多数据
+
   async aboutToAppear() {
-    let list = await $get_news<NewsType>('/news/ed')
-    console.log('页面即将显示', JSON.stringify(list))
-    this.res = list //3.改数据 （将网络请求到的数据设置给预先定义的响应式数据）
+    await this.loadMore();
   }
 
   page = 1;
+  pageSize = 10;
 
-  loadMore = async ()=>{
-    // let url = this.path + '/?category=${cate}&page=${this.page}'
-    // let list = await $get_news<NewsType>(url)
-    // this.page++
-    // this.res = [
-    //   ...this.res,  //原数据，拓展运算符
-    //   ...list  //新数据
-    // ]
-  }
+  loadMore = async () => {
+
+    if(this.keyword != '' && this.keyword != null){
+      let url = `${this.path}/?keyword=${this.keyword}`;
+      let list = await $get_news<NewsType>(url);
+      this.res = [...this.res, ...list];  // 合并新数据
+    }
+
+    else{
+      if (this.loading || !this.hasMore) return;  // 防止重复请求 & 避免无效请求
+      this.loading = true;  // 设置加载状态
+
+      let url = `${this.path}/?page=${this.page}`;
+      let list = await $get_news<NewsType>(url);
+
+      if (list.length < this.pageSize) {
+        this.hasMore = false;  // 如果返回数据少于一页，则说明没有更多数据了
+      }
+
+      this.res = [...this.res, ...list];  // 合并新数据
+      this.page++;  // 页码+1
+      this.loading = false;  // 取消加载状态
+    }
+
+  };
+
 
   build() {
     // 内容展示列表
-    Scroll(){
+    Row() {
       List({ space: 10 }) {
         ForEach(this.res, (item: NewsType) => {
-
           ListItem() {
             newsItem({
               title: item.title,
@@ -45,64 +66,11 @@ export default struct MainContent {
       }
       .alignListItem(ListItemAlign.Center)
       .divider(this.egDivider)
+      .onReachEnd(() => this.loadMore()) // 监听触底
 
-      // ListItem() {
-      //   newsItem({
-      //     title: "占位",
-      //     createTime: "占位",
-      //     source: "占位",
-      //     imgPath: "占位"
-      //   })
-      //     .height('20%')
-      //     .margin({ left: 10, right: 10 })
-      // }
-      //
-      // ListItem() {
-      //   newsItem({
-      //     title: "占位",
-      //     createTime: "占位",
-      //     source: "占位",
-      //     imgPath: "占位"
-      //   })
-      //     .height('20%')
-      //     .margin({ left: 10, right: 10 })
-      // }
-      //
-      // ListItem() {
-      //   newsItem({
-      //     title: "占位",
-      //     createTime: "占位",
-      //     source: "占位",
-      //     imgPath: "占位"
-      //   })
-      //     .height('20%')
-      //     .margin({ left: 10, right: 10 })
-      // }
-      //
-      // ListItem() {
-      //   newsItem({
-      //     title: "占位",
-      //     createTime: "占位",
-      //     source: "占位",
-      //     imgPath: "占位"
-      //   })
-      //     .height('20%')
-      //     .margin({ left: 10, right: 10 })
-      // }
-      //
-      // ListItem() {
-      //   newsItem({
-      //     title: "占位",
-      //     createTime: "占位",
-      //     source: "占位",
-      //     imgPath: "占位"
-      //   })
-      //     .height('20%')
-      //     .margin({ left: 10, right: 10 })
-      // }
 
     }
-    }
+  }
 
 }
 

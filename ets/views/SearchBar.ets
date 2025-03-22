@@ -1,35 +1,31 @@
-
-
 @Component
-export default struct SearchBar{
-   inputText: string = '';
-   @Prop onSearch: (value: string) => void  // 通过Props传递回调函数
+export default struct SearchBar {
+  inputText: string = '';
+
+  @Link keyword: string;
 
   build() {
     Row() {
-      //  搜索图标
-      Image($r('app.media.search'))
+      // 搜索图标
+      Image($rawfile('search.svg'))
         .aspectRatio(1)  // 保持原本形状
         .layoutWeight(0.6)
 
-      //  搜索栏
-      TextInput({placeholder: '请输入搜索关键词'})
-        .layoutWeight(8)
-        // 保存搜索关键词
-        .onChange((value) => { this.inputText = value })
 
+      // 搜索栏
+      TextInput({ placeholder: '请输入搜索关键词' })
+        .layoutWeight(8)
+        .onChange((value) => { this.keyword = value }) // 保存搜索关键词
 
       // 点击按钮
-      Image($r('app.media.benefits'))
+      Image($rawfile('benefits.svg'))
         .aspectRatio(1)  // 保持原本形状
         .layoutWeight(1)
         .onClick(() => {
-            if(this.inputText.trim() !== ''){
-              //this.onSearch(this.inputText);
-              // console.log(this.inputText);
-            }
+          if (this.inputText.trim() !== '') {
+            this.keyword = this.inputText;
+          }
         })
     }
   }
-
 }

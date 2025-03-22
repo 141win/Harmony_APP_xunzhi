@@ -1,27 +1,30 @@
 import { ScienceType } from '../models/ScienceData'
 import { $get_sci } from '../utils/request'
+import { router } from '@kit.ArkUI'
 
-@Entry
 @Component
 export default struct RequestPage {
-  @State productList:Array<ScienceType> = [] //1. 定数据
+  @State productList: Array<ScienceType> = [] //1. 定数据
+  @Prop item: ScienceType
+  @Prop index: number
 
   async aboutToAppear() {
     let list = await $get_sci<ScienceType>('/news/ed')
-    console.log('页面即将显示',JSON.stringify(list))
+    console.log('页面即将显示', JSON.stringify(list))
     this.productList = list
   }
 
   //事件函数封装
-  handleGetProduct = async ()=>{
+  handleGetProduct = async () => {
     let results = await $get_sci<ScienceType>('/news/ed')
-    console.log('新闻数据',JSON.stringify(results))
-    this.productList = results  //3. 改数据。将商品数据赋值给状态数据
+    console.log('新闻数据', JSON.stringify(results))
+    this.productList = results //3. 改数据。将商品数据赋值给状态数据
   }
+
   build() {
     Column() {
       List({ space: 10 }) {
-        ForEach(this.productList , (item:ScienceType) => {
+        ForEach(this.productList, (item: ScienceType) => {
           ListItem() {
             Row() {
               Image(item.img)
@@ -46,11 +49,19 @@ export default struct RequestPage {
               }
             }
             .padding(8)
+            .onClick(() => {
+              console.log('教育页触发详情页')
+              router.pushUrl({
+                url: 'pages/TeachDetailPage',
+                params: { id: this.index }
+              })
+            })
+
           }
           .borderRadius(12)
           .backgroundColor(Color.White)
           .shadow(ShadowStyle.OUTER_DEFAULT_XS)
-        }, (item:ScienceType) => JSON.stringify(item))
+        }, (item: ScienceType) => JSON.stringify(item))
       }
       .height('100%')
       .width('100%')

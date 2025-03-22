@@ -8,18 +8,18 @@ export interface NavIconType{
 
 export const navIcon:Array<NavIconType> = [
   {
-    icon:$r('app.media.news'),
-    selectedIcon:$r('app.media.news_active'),
+    icon:$rawfile('news.svg'),
+    selectedIcon:$rawfile('news_active.svg'),
     name:'新闻'
   },
   {
-    icon:$r('app.media.popular'),
-    selectedIcon:$r('app.media.popular'),
+    icon:$rawfile('popular.svg'),
+    selectedIcon:$rawfile('popular_active.svg'),
     name:'关注'
   },
   {
-    icon:$r('app.media.mine'),
-    selectedIcon:$r('app.media.mine_active'),
+    icon:$rawfile('mine.svg'),
+    selectedIcon:$rawfile('mine_active.svg'),
     name:'我的'
   }
 ]

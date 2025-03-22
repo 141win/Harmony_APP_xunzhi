@@ -1,7 +1,13 @@
 {
   "src": [
-    "pages/MinePage",
+    "pages/Login",
+    "pages/RegisterPage",
+    "pages/DetailPage1",
+    "pages/DetailPage2",
+    "pages/CaronePage",
+    "pages/CartwoPage",
+    "pages/TeachDetailPage",
     "pages/MainPage",
-    "pages/PopularPage"
+    "pages/StockPage"
   ]
 }

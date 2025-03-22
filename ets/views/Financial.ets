@@ -1,23 +1,18 @@
-import { StockType, StockResData } from '../models/Stock'
+import { StockType } from '../models/Stock'
 import { $get_stock } from '../utils/request'
+import { router } from "@kit.ArkUI"
+import ImageSwiper from '../views/ImageSwiper'
 
 @Component
 export default struct AxiosPage {
   @State res: Array<StockType> = [] //定数据
-  fetchData = async () => {
-    //发起网络请求
-    // request.get('/stock')
-    //   .then((res: AxiosResponse<responseData<stockType>>) => {
-    //     console.log(JSON.stringify(res))
-    //   })
-    this.res = await $get_stock<StockType>('/stock')
-    console.log(JSON.stringify(this.res))
-  }
+  @State stockIdx: number = 0
 
   //生命周期，挂载该组件时自动调用
   async aboutToAppear() {
     let url = `/stock?&page=${this.page}&pageSize=${20}`
     let list = await $get_stock<StockType>(url)
+    console.log(JSON.stringify(list))
     this.res = list //3.改数据 （将网络请求到的数据设置给预先定义的响应式数据）
   }
 
@@ -25,7 +20,6 @@ export default struct AxiosPage {
   //加载更多，触底调用
   loadMore = async () => {
     console.log('触底了', this.page)
-    // let cate = category[this.idx].cate //提取当前菜单对应的分类标志
     let url = `/stock?&page=${this.page}&pageSize=${20}`
     let list = await $get_stock<StockType>(url)
     this.page++
@@ -38,37 +32,45 @@ export default struct AxiosPage {
   build() {
     Scroll() {
       Column() {
+        //横向滑动展示图片
+        ImageSwiper()
+          .height(180)
+
+        //股票基本信息列表
         Row() {
           Text("代码")
           Text("名称")
           Text("上市日期")
-          Text("现价")
         }
         .width('100%')
         .justifyContent(FlexAlign.SpaceAround)
 
-        // Scroll() {
         ForEach(this.res, (item: StockType, index: number) => {
           Row() {
             Text(item.id + '')
             Text(item.name)
             Text(item.listing_date)
-            Text(item.price + '')
           }
-          .border({ width: 3, color: 'green' })
+
           .width('100%')
           .height('10%')
           .justifyContent(FlexAlign.SpaceAround)
+          .onClick(() => {
+            console.log('点击股票详情页')
+            this.stockIdx = index
+            router.pushUrl({
+              url: 'pages/StockPage', //目标页面路径（必须是页面，必须在main_pages.json文件中添加该页面文件路径）
+              params: {stockId:this.stockIdx,item}  //将股票数据传给股票详情页
+            })
+          })
 
-          Text('_____________')// .border({width:3,color:'red'})
-            .width('100%')
-            .height('5%')
+          //分割线
+          Divider().height(2).color(0xCCCCCC)
         })
       }
     }
     .scrollBarWidth(2)
     .onScrollEdge((side: Edge) => {
-      // console.log('触达边缘',side)
       if (side == 2) {
         this.loadMore()
       }

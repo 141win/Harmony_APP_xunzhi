@@ -16,7 +16,7 @@ export default struct Logo{
 
     Row() {
 
-      Image($r('app.media.logo'))
+      Image($rawfile('logo.svg'))
         .aspectRatio(1)  // 保持原本形状
         .height(40)
 

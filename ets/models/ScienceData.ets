@@ -1,4 +1,9 @@
 //数据接口
+export interface ResData<T> {
+  code: number
+  msg: string
+  data: T
+}
 export interface ScienceResData<T> {
   code:number
   msg:string
